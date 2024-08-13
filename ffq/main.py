@@ -4,23 +4,14 @@ import logging
 import os
 import sys
 
-from ffq.exceptions import CliError, InvalidAccession, FfqException, FailToFetchData
+from ffq.exceptions import (CliError, FailToFetchData, FfqException,
+                            InvalidAccession)
 from ffq.utils import findkey
 
 from . import __version__
-from .ffq import (
-    ffq_doi,
-    ffq_gse,
-    ffq_run,
-    ffq_study,
-    ffq_sample,
-    ffq_gsm,
-    ffq_experiment,
-    ffq_encode,
-    ffq_bioproject,
-    ffq_biosample,
-    validate_accessions,
-)
+from .ffq import (ffq_bioproject, ffq_biosample, ffq_doi, ffq_encode,
+                  ffq_experiment, ffq_gse, ffq_gsm, ffq_run, ffq_sample,
+                  ffq_study, validate_accessions)
 
 logger = logging.getLogger(__name__)
 
