@@ -218,6 +218,13 @@ def parse_run(soup):
     }
 
 
+def safe_find_text(soup, key):
+    try:
+        return soup.find(key).text
+    except Exception:
+        return ""
+
+
 def parse_sample(soup):
     """Given a BeautifulSoup object representing a sample, parse out relevant
     information.
@@ -229,8 +236,8 @@ def parse_sample(soup):
     :rtype: dict
     """
     accession = soup.find("PRIMARY_ID", text=SAMPLE_PARSER).text
-    title = soup.find("TITLE").text
-    organism = soup.find("SCIENTIFIC_NAME").text
+    title = safe_find_text(soup, "TITLE")
+    organism = safe_find_text(soup, "SCIENTIFIC_NAME")
     sample_attribute = soup.find_all("SAMPLE_ATTRIBUTE")
     try:
         attributes = {
