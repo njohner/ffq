@@ -238,7 +238,9 @@ def parse_sample(soup):
     accession = soup.find("PRIMARY_ID", text=SAMPLE_PARSER).text
     title = safe_find_text(soup, "TITLE")
     organism = safe_find_text(soup, "SCIENTIFIC_NAME")
+    description = safe_find_text(soup, "DESCRIPTION")
     sample_attribute = soup.find_all("SAMPLE_ATTRIBUTE")
+    submitter_id = safe_find_text(soup, "SUBMITTER_ID")
     try:
         attributes = {
             attr.find("TAG").text: attr.find("VALUE").text for attr in sample_attribute
@@ -284,6 +286,8 @@ def parse_sample(soup):
         "organism": organism,
         "attributes": attributes,
         "experiments": experiment,
+        "description": description,
+        "submitter_id": submitter_id,
     }
 
 
