@@ -41,14 +41,27 @@ SAMPLE_PARSER = re.compile(r"(SRS.+)|(ERS.+)|(DRS.+)")
 logger = logging.getLogger(__name__)
 
 
+def perseverent_get(*args, n_retries=10, retry_interval=1, **kwargs):
+    for i in range(n_retries):
+        response = requests.get(*args, **kwargs)
+        try:
+            response.raise_for_status()
+            return response
+        except requests.HTTPError:
+            logger.warning(f"Retrying failed request {args} {kwargs}")
+            time.sleep(retry_interval)
+            continue
+    return response
+
+
 @lru_cache()
 def cached_get(*args, **kwargs):
-    """Cached version of requests.get.
+    """Cached version of perseverent_get.
 
     :return: text of response
     :rtype: str
     """
-    response = requests.get(*args, **kwargs)
+    response = perseverent_get(*args, **kwargs)
     try:
         response.raise_for_status()
     except requests.HTTPError as exception:
@@ -530,7 +543,7 @@ def ncbi_fetch_fasta(accession, db):
     :return: BeautifulSoup object with fastq files information
     :rtype: bs4.BeautifulSoup
     """
-    response = requests.get(
+    response = perseverent_get(
         NCBI_FETCH_URL,
         params={
             "db": db,
@@ -564,7 +577,7 @@ def ncbi_summary(db, id):
     """
     # TODO: use cached get. Can't be used currently because dictionaries can
     # not be hashed.
-    response = requests.get(
+    response = perseverent_get(
         NCBI_SUMMARY_URL,
         params={
             "db": db,
@@ -594,7 +607,7 @@ def ncbi_search(db, term):
     """
     # TODO: use cached get. Can't be used currently because dictionaries can
     # not be hashed.
-    response = requests.get(
+    response = perseverent_get(
         NCBI_SEARCH_URL,
         params={
             "db": db,
@@ -623,7 +636,7 @@ def ncbi_link(origin, destination, id):
     """
     # TODO: use cached get. Can't be used currently because dictionaries can
     # not be hashed.
-    response = requests.get(
+    response = perseverent_get(
         NCBI_LINK_URL,
         params={
             "dbfrom": origin,
@@ -722,7 +735,7 @@ def geo_ids_to_gses(ids):
     """
     # TODO: use cached get. Can't be used currently because dictionaries can
     # not be hashed.
-    response = requests.get(NCBI_FETCH_URL, params={"db": "gds", "id": ",".join(ids)})
+    response = perseverent_get(NCBI_FETCH_URL, params={"db": "gds", "id": ",".join(ids)})
     response.raise_for_status()
     return sorted(list(set(GSE_PARSER.findall(response.text))))
 
@@ -738,7 +751,7 @@ def sra_ids_to_srrs(ids):
     """
     # TODO: use cached get. Can't be used currently because dictionaries can
     # not be hashed.
-    response = requests.get(NCBI_SUMMARY_URL, params={"db": "sra", "id": ",".join(ids)})
+    response = perseverent_get(NCBI_SUMMARY_URL, params={"db": "sra", "id": ",".join(ids)})
     response.raise_for_status()
     return sorted(list(set(SRR_PARSER.findall(response.text))))
 
