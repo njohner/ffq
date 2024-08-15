@@ -2,39 +2,19 @@ import json
 import logging
 import re
 import time
-from urllib.parse import urlparse
 import warnings
+from urllib.parse import urlparse
 
 from .exceptions import InvalidAccession
-from .utils import (
-    geo_ids_to_gses,
-    gsm_id_to_srs,
-    get_doi,
-    get_gse_search_json,
-    get_gsm_search_json,
-    get_xml,
-    get_encode_json,
-    get_samples_from_study,
-    ncbi_link,
-    ncbi_search,
-    ncbi_fetch_fasta,
-    ncbi_summary,
-    parse_encode_json,
-    search_ena_run_sample,
-    search_ena_run_study,
-    search_ena_title,
-    search_ena,
-    sra_ids_to_srrs,
-    geo_to_suppl,
-    gsm_to_platform,
-    gse_to_gsms,
-    srx_to_srrs,
-    get_files_metadata_from_run,
-    parse_url,
-    parse_ncbi_fetch_fasta,
-    ena_fetch,
-    parse_bioproject,
-)
+from .utils import (ena_fetch, geo_ids_to_gses, geo_to_suppl, get_doi,
+                    get_encode_json, get_files_metadata_from_run,
+                    get_gse_search_json, get_gsm_search_json,
+                    get_samples_from_study, get_xml, gse_to_gsms,
+                    gsm_id_to_srs, gsm_to_platform, ncbi_fetch_fasta,
+                    ncbi_link, ncbi_search, ncbi_summary, parse_bioproject,
+                    parse_encode_json, parse_ncbi_fetch_fasta, parse_url,
+                    search_ena, search_ena_run_sample, search_ena_run_study,
+                    search_ena_title, sra_ids_to_srrs, srx_to_srrs)
 
 warnings.filterwarnings("ignore", category=UserWarning, module="bs4")
 
@@ -269,12 +249,12 @@ def parse_sample(soup):
             "ENA search..."
         )
         try:
-            experiment = search_ena(
+            experiment = ",".join(search_ena(
                 accession,
                 "secondary_sample_accession",
                 "read_experiment",
                 "experiment_accession",
-            )[0]
+            ))
 
         except:  # noqa
             experiment = ""

@@ -1,35 +1,21 @@
 import json
+import logging
 import re
 import time
+from ftplib import FTP
 from functools import lru_cache
 
 import requests
-from ftplib import FTP
 from bs4 import BeautifulSoup
 from frozendict import frozendict
-import logging
 
-from .exceptions import InvalidAccession, ConnectionError, BadData
-from .config import (
-    CROSSREF_URL,
-    ENA_SEARCH_URL,
-    ENA_URL,
-    ENA_FETCH,
-    GSE_SEARCH_URL,
-    GSE_SUMMARY_URL,
-    GSE_SEARCH_TERMS,
-    GSE_SUMMARY_TERMS,
-    NCBI_FETCH_URL,
-    NCBI_LINK_URL,
-    NCBI_SEARCH_URL,
-    NCBI_SUMMARY_URL,
-    FTP_GEO_URL,
-    FTP_GEO_SAMPLE,
-    FTP_GEO_SERIES,
-    FTP_GEO_SUPPL,
-    ENCODE_BIOSAMPLE_URL,
-    ENCODE_JSON,
-)
+from .config import (CROSSREF_URL, ENA_FETCH, ENA_SEARCH_URL, ENA_URL,
+                     ENCODE_BIOSAMPLE_URL, ENCODE_JSON, FTP_GEO_SAMPLE,
+                     FTP_GEO_SERIES, FTP_GEO_SUPPL, FTP_GEO_URL,
+                     GSE_SEARCH_TERMS, GSE_SEARCH_URL, GSE_SUMMARY_TERMS,
+                     GSE_SUMMARY_URL, NCBI_FETCH_URL, NCBI_LINK_URL,
+                     NCBI_SEARCH_URL, NCBI_SUMMARY_URL)
+from .exceptions import BadData, ConnectionError, InvalidAccession
 
 RUN_PARSER = re.compile(r"(SRR.+)|(ERR.+)|(DRR.+)")
 GSE_PARSER = re.compile(r"Series\t\tAccession: (?P<accession>GSE[0-9]+)\t")
